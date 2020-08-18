@@ -2,8 +2,8 @@ class Board {
     constructor(container) {
         this.container = $(container)
         this.canvas = this.container.children('canvas')[0]
-        this.width = 8
-        this.height = 8
+        this.width = 7
+        this.height = 7
         this.margin = 1
         this.root_color = '#DCEBF8'
         this.yes_color = '#A7D6BB'
@@ -30,6 +30,7 @@ class Board {
         for (var i = 1; i < this.width + 2 * this.margin; i++) {
             this.drawLine(i * this.cell_width, 0, i * this.cell_width, this.canvas.height)
         }
+        // draw root note
         this.highlight(4, 4, this.root_color)
         this.drawNote(4, 4, '1')
     }
