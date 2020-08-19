@@ -7,13 +7,14 @@ class Board {
 
         this.width = 7
         this.height = 7
-        this.margin = 1
+        this.margin = 0
         this.root_color = '#DCEBF8'
         this.yes_color = '#A7D6BB'
         this.no_color = '#FA9B9B'
         this.front_color = '#6F7C85'
 
-        this.canvas.height = this.canvas.width = this.container.width()
+        this.canvas.width = this.container.width()
+        this.canvas.height = this.canvas.width / (16 / 9)
         this.cell_height = this.canvas.height / (this.height + 2 * this.margin)
         this.cell_width = this.canvas.width / (this.width + 2 * this.margin)
         this.drawBoard()
@@ -25,8 +26,8 @@ class Board {
     }
     drawBoard() {
         // draw horizon lines
-        for (var i = 1; i < this.height + 2 * this.margin; i++) {
-            this.drawLine(0, i * this.cell_height, this.canvas.width, i * this.cell_height)
+        for (var i = 1; i <= this.height + 2 * this.margin; i++) {
+            this.drawLine(0, (i - 0.5) * this.cell_height, this.canvas.width, (i - 0.5) * this.cell_height)
         }
         // draw vertical lines
         for (var i = 1; i < this.width + 2 * this.margin; i++) {
@@ -45,9 +46,9 @@ class Board {
         ctx.stroke()
     }
     highlight(row, col, color) {
-        const x = (col + this.margin) * this.cell_width
-        const y = (row + this.margin) * this.cell_height
-        this.drawRect(x, y, this.cell_width, this.cell_height, color)
+        const x = (col + this.margin + 0.5) * this.cell_width
+        const y = (row + this.margin + 0.5) * this.cell_height
+        this.drawCircle(x, y, this.cell_height / 2, color)
     }
     drawNote(row, col, note) {
         const ctx = this.canvas.getContext("2d")
@@ -64,6 +65,13 @@ class Board {
         const ctx = this.canvas.getContext("2d")
         ctx.fillStyle = c
         ctx.fillRect(x, y, w, h)
+    }
+    drawCircle(x, y, r, c) {
+        const ctx = this.canvas.getContext("2d")
+        ctx.fillStyle = c
+        ctx.beginPath()
+        ctx.arc(x, y, r, 0, Math.PI * 2)
+        ctx.fill()
     }
     showQuestion(text) {
         this.question_area.text(text)
