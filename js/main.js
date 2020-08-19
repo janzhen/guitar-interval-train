@@ -52,13 +52,13 @@ class Board {
     }
     drawNote(row, col, note) {
         const ctx = this.canvas.getContext("2d")
-        const height = this.cell_height * .5
-        ctx.font = `${height}px sans-serif`
-        ctx.textBaseline = 'top'
+        const height = this.cell_height * .7
+        ctx.font = `${height}px serif`
+        ctx.textBaseline = 'middle'
         ctx.fillStyle = this.front_color
         const width = ctx.measureText(note).width
-        const x = (col + this.margin) * this.cell_width + (this.cell_width - width) / 2
-        const y = (row + this.margin) * this.cell_height + height / 2
+        const x = (col + this.margin + 0.5) * this.cell_width - width / 2
+        const y = (row + this.margin + 0.5) * this.cell_height
         ctx.fillText(note, x, y)
     }
     drawRect(x, y, w, h, c) {
