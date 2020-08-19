@@ -213,5 +213,5 @@ class IntervalGame {
 }
 
 
-const board = new Board('.container')
+const board = new Board('.interval-train-container')
 const game = new IntervalGame(board)
