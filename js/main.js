@@ -112,6 +112,7 @@ class IntervalGame {
 
         this.drawAll()
         btn_start.click(function() {
+            this.board.clear()
             this.board.question_area.empty()
             this.run()
         }.bind(this))
