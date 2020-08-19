@@ -7,7 +7,7 @@ class Board {
 
         this.width = 7
         this.height = 7
-        this.margin = 2
+        this.margin = 1
         this.root_color = '#DCEBF8'
         this.yes_color = '#A7D6BB'
         this.no_color = '#FA9B9B'
