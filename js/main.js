@@ -1,6 +1,7 @@
 class Board {
     constructor(container) {
         this.container = $(container)
+        this.build()
         this.canvas = this.container.children('canvas')[0]
         this.question_area = this.container.children('.question')
 
@@ -12,7 +13,6 @@ class Board {
         this.no_color = '#FA9B9B'
         this.front_color = '#6F7C85'
 
-        this.setStyle()
         this.canvas.height = this.canvas.width = this.container.width()
         this.cell_height = this.canvas.height / (this.height + 2 * this.margin)
         this.cell_width = this.canvas.width / (this.width + 2 * this.margin)
@@ -87,12 +87,14 @@ class Board {
             }
         }.bind(this))
     }
-    setStyle() {
+    build() {
         this.container.css({
             'width': '100%',
             'max-width': '400px',
             'margin': '0 auto'
         })
+      this.container.append($('<canvas></canvas>'))
+      this.container.append($('<div class="question"></div>'))
     }
 }
 
