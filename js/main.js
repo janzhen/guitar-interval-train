@@ -34,8 +34,12 @@ class Board {
             this.drawLine(i * this.cell_width, 0, i * this.cell_width, this.canvas.height)
         }
         // draw root note
-        this.highlight(3, 3, this.root_color)
-        this.drawNote(3, 3, '1')
+        const root_pos = [[0, 0], [1, 5], [3, 3], [5, 1], [6, 6]]  // 1
+        for (var i = 0, len = root_pos.length; i < len; i++) {
+            var row = root_pos[i][0], col = root_pos[i][1]
+            this.highlight(row, col, this.root_color)
+            this.drawNote(row, col, '1')
+        }
     }
     drawLine(x1, y1, x2, y2) {
         const ctx = this.canvas.getContext("2d")
@@ -110,9 +114,8 @@ class Board {
 class IntervalGame {
     constructor(board) {
         this.board = board
-        this.notes = ['1', 'b3', '4', '5', 'b7']
+        this.notes = ['b3', '4', '5', 'b7']
         this.position = [
-            [[0, 0], [1, 5], [5, 1], [6, 6]],  // 1
             [[2, 1], [3, 6], [5, 4]],  // b3
             [[2, 3], [4, 1], [5, 6]],  // 4
             [[1, 0], [2, 5], [4, 3]],  // 5
