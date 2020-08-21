@@ -119,6 +119,11 @@ class IntervalGame {
         this.state = null
         this.initState()
 
+        this.hint_btn = $('<button>Hint</buttom>')
+        this.hint_btn.click(function() {
+            this.drawAllNotes()
+        }.bind(this))
+
         this.run()
     }
     initState() {
@@ -175,6 +180,7 @@ class IntervalGame {
             this.state.question = this.removeOutsidePosition(this.positionOfNote(this.state.note))
             this.state.answer = []
             this.board.question_area.text('Find out ' + this.state.note + '.')
+            this.board.question_area.append(this.hint_btn)
             this.drawRootNotes()
         }
 
@@ -233,6 +239,16 @@ class IntervalGame {
             var row = fretboard_pos[0], col = fretboard_pos[1]
             this.board.highlight(row, col, this.board.root_color)
             this.board.drawNote(row, col, this.root_note)
+        }
+    }
+    drawAllNotes() {
+        for (var i = 0; i < this.notes.length; i++) {
+            const note = this.notes[i]
+            const note_position = this.removeOutsidePosition(this.position[i])
+            for (var j = 0; j < note_position.length; j++) {
+                const fretboard_pos = this.positionToFretboard(note_position[j][0], note_position[j][1])
+                this.board.drawNote(fretboard_pos[0], fretboard_pos[1], note)
+            }
         }
     }
     removeOutsidePosition(position) {
