@@ -5,8 +5,8 @@ class Board {
         this.canvas = this.container.children('canvas')[0]
         this.question_area = this.container.children('.question')
 
-        this.width = 7
-        this.height = 7
+        this.width = 8
+        this.height = 6
         this.margin = 0
         this.root_color = '#DCEBF8'
         this.yes_color = '#A7D6BB'
@@ -98,8 +98,8 @@ class Board {
             'max-width': '400px',
             'margin': '0 auto'
         })
-      this.container.append($('<canvas></canvas>'))
       this.container.append($('<div class="question"></div>'))
+      this.container.append($('<canvas></canvas>'))
     }
 }
 
@@ -108,7 +108,7 @@ class IntervalGame {
     constructor(board) {
         this.board = board
         this.root_note = '1'
-        this.root_note_position = [[3, 3], [0, 0], [1, 5], [5, 1], [6, 6]]
+        this.root_note_position = [[3, 3]]
         this.notes = ['b3', '4', '5', 'b7']
         this.position = [
             [[2, 1], [3, 6], [5, 4]],  // b3
@@ -116,38 +116,42 @@ class IntervalGame {
             [[1, 0], [2, 5], [4, 3]],  // 5
             [[1, 3], [3, 1], [4, 6]]  // b7
         ]
+        this.state = null
+        this.initState()
+
+        this.run()
+    }
+    initState() {
         this.state = {
             note: null,
+            row_offset: 0,
             question: [],
             answer: [],
         }
-
-        const btn_start = $('<button>Start</button>')
-        this.board.question_area.append(btn_start)
-
-        this.drawAll()
-        btn_start.click(function() {
-            this.clear()
-            this.board.question_area.empty()
-            this.run()
-        }.bind(this))
+    }
+    clear() {
+        this.board.clear()
+        this.board.question_area.empty()
+        this.initState()
     }
     run() {
         this.board.click(function(x, y) {
             var pos = this.board.xyToPosition(x, y)
             this.click(pos[0], pos[1])
         }.bind(this))
+        this.clear()
         this.next()
     }
     click(row, col) {
-        var note = this.positionToNote(row, col)
+        const pos = this.fretboardToPosition(row, col)
+        const note = this.positionToNote(pos[0], pos[1])
         if(note === undefined) {
             this.board.highlight(row, col, this.board.no_color)
             return
         }
 
         // store answer
-        this.state.answer.push([row, col])
+        this.state.answer.push(pos)
 
         // draw answer
         if(note === this.state.note) {
@@ -165,11 +169,13 @@ class IntervalGame {
     }
     next() {
         if(!this.state.note) {
-            // init game
+            // start new round
+            this.state.row_offset = Math.floor(Math.random() * this.board.height) - this.root_note_position[0][0]
             this.state.note = this.randomNote()
-            this.state.question = this.positionOfNote(this.state.note)
+            this.state.question = this.removeOutsidePosition(this.positionOfNote(this.state.note))
             this.state.answer = []
             this.board.question_area.text('Find out ' + this.state.note + '.')
+            this.drawRootNotes()
         }
 
         // check if answered all
@@ -183,10 +189,9 @@ class IntervalGame {
             }
         }
         if(correct === this.state.question.length) {
-            // Correct. Next question.
+            // Correct. Round end.
             this.board.question_area.text('Right!')
             setTimeout(function() {
-                this.state.note = null
                 this.clear()
                 this.next()
             }.bind(this), 500);
@@ -212,27 +217,37 @@ class IntervalGame {
             }
         }
     }
-    drawAll() {
-        this.clear()
-        for (var i in this.notes) {
-            var n = this.notes[i]
-            for (var j in this.position[i]) {
-                var pos = this.position[i][j]
-                if (n === '1') {
-                    this.board.highlight(pos[0], pos[1], this.board.root_color)
-                }
-                this.board.drawNote(pos[0], pos[1], n)
-            }
-        }
+    positionToFretboard(row, col) {
+        const _row = row + this.state.row_offset
+        const _col = (_row < 2) ? col + 1 : col
+        return [_row, _col]
     }
-    clear() {
-        this.board.clear()
-        // draw root note
+    fretboardToPosition(row, col) {
+        const _row = row - this.state.row_offset
+        const _col = (row < 2) ? col - 1 : col
+        return [_row, _col]
+    }
+    drawRootNotes() {
         for (var i = 0, len = this.root_note_position.length; i < len; i++) {
-            var row = this.root_note_position[i][0], col = this.root_note_position[i][1]
+            const fretboard_pos = this.positionToFretboard(this.root_note_position[i][0], this.root_note_position[i][1])
+            var row = fretboard_pos[0], col = fretboard_pos[1]
             this.board.highlight(row, col, this.board.root_color)
             this.board.drawNote(row, col, this.root_note)
         }
+    }
+    removeOutsidePosition(position) {
+        var _position = []
+        for (var i = 0, len = position.length; i < len; i++) {
+            const fretboard_pos = this.positionToFretboard(position[i][0], position[i][1])
+            if(fretboard_pos[0] < 0
+                || fretboard_pos[0] >= this.board.height
+                || fretboard_pos[1] < 0
+                || fretboard_pos[1] >= this.board.width) {
+                continue
+            }
+            _position.push(position[i])
+        }
+        return _position
     }
 }
 
