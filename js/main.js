@@ -30,15 +30,8 @@ class Board {
             this.drawLine(0, (i - 0.5) * this.cell_height, this.canvas.width, (i - 0.5) * this.cell_height)
         }
         // draw vertical lines
-        for (var i = 1; i < this.width + 2 * this.margin; i++) {
+        for (i = 1; i < this.width + 2 * this.margin; i++) {
             this.drawLine(i * this.cell_width, 0, i * this.cell_width, this.canvas.height)
-        }
-        // draw root note
-        const root_pos = [[0, 0], [1, 5], [3, 3], [5, 1], [6, 6]]  // 1
-        for (var i = 0, len = root_pos.length; i < len; i++) {
-            var row = root_pos[i][0], col = root_pos[i][1]
-            this.highlight(row, col, this.root_color)
-            this.drawNote(row, col, '1')
         }
     }
     drawLine(x1, y1, x2, y2) {
@@ -114,6 +107,8 @@ class Board {
 class IntervalGame {
     constructor(board) {
         this.board = board
+        this.root_note = '1'
+        this.root_note_position = [[3, 3], [0, 0], [1, 5], [5, 1], [6, 6]]
         this.notes = ['b3', '4', '5', 'b7']
         this.position = [
             [[2, 1], [3, 6], [5, 4]],  // b3
@@ -132,7 +127,7 @@ class IntervalGame {
 
         this.drawAll()
         btn_start.click(function() {
-            this.board.clear()
+            this.clear()
             this.board.question_area.empty()
             this.run()
         }.bind(this))
@@ -156,7 +151,7 @@ class IntervalGame {
 
         // draw answer
         if(note === this.state.note) {
-            if(note === '1') {
+            if(note === this.root_note) {
                 this.board.highlight(row, col, this.board.root_color)
             } else {
                 this.board.highlight(row, col, this.board.yes_color)
@@ -192,7 +187,7 @@ class IntervalGame {
             this.board.question_area.text('Right!')
             setTimeout(function() {
                 this.state.note = null
-                this.board.clear()
+                this.clear()
                 this.next()
             }.bind(this), 500);
         }
@@ -213,13 +208,12 @@ class IntervalGame {
                 if(row === this.position[i][j][0]
                     && col === this.position[i][j][1]) {
                     return this.notes[i]
-                    break
                 }
             }
         }
     }
     drawAll() {
-        this.board.clear()
+        this.clear()
         for (var i in this.notes) {
             var n = this.notes[i]
             for (var j in this.position[i]) {
@@ -231,8 +225,17 @@ class IntervalGame {
             }
         }
     }
+    clear() {
+        this.board.clear()
+        // draw root note
+        for (var i = 0, len = this.root_note_position.length; i < len; i++) {
+            var row = this.root_note_position[i][0], col = this.root_note_position[i][1]
+            this.board.highlight(row, col, this.board.root_color)
+            this.board.drawNote(row, col, this.root_note)
+        }
+    }
 }
 
 
 const board = new Board('.interval-train-container')
-const game = new IntervalGame(board)
+new IntervalGame(board)
