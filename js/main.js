@@ -109,8 +109,9 @@ class IntervalGame {
         this.board = board
         this.root_note = '1'
         this.root_note_position = [[3, 3]]
-        this.notes = ['b3', '4', '5', 'b7']
+        this.notes = ['1', 'b3', '4', '5', 'b7']
         this.position = [
+            [[0, 0], [1, 5], [5, 1], [6, 6]],  // 1
             [[2, 1], [3, 6], [5, 4]],  // b3
             [[2, 3], [4, 1], [5, 6]],  // 4
             [[1, 0], [2, 5], [4, 3]],  // 5
