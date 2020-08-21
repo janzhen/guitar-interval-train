@@ -179,7 +179,7 @@ class IntervalGame {
             this.state.note = this.randomNote()
             this.state.question = this.removeOutsidePosition(this.positionOfNote(this.state.note))
             this.state.answer = []
-            this.board.question_area.text('Find out ' + this.state.note + '.')
+            this.board.question_area.text('Find all ' + this.state.note + '.')
             this.board.question_area.append(this.hint_btn)
             this.drawRootNotes()
         }
